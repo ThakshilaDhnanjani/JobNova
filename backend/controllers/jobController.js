@@ -72,7 +72,7 @@ exports.getJobs = async (req, res) => {
 
         //Attach isSaved and applicationStatus to each job
         const jobsWithExtras = jobs.map((job) => {
-            const jobIdStr = job.String(job._id);
+            const jobIdStr = String(job._id);
             return {
                 ...job.toObject(),
                 isSaved: SavedJobIds.includes(jobIdStr),

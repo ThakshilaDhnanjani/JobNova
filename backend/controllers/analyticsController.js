@@ -21,7 +21,7 @@ exports.getEmployerAnalytics = async (req, res) => {
         prev7Days.setDate(now.getDate() - 14);
 
         //======COUNTS=====
-        const totalActiveJobs = await Job.countDocuments({ company: companyId, iaClosed: false});
+        const totalActiveJobs = await Job.countDocuments({ company: companyId, isClosed: false});
         const jobs = await Job.find({ company: companyId }).select("_id").lean();
         const jobIds = jobs.map(job => job._id);
         
@@ -99,6 +99,10 @@ exports.getEmployerAnalytics = async (req, res) => {
                     totalHired: hiredTrend
                 }
             },
+            data: {
+                recentJobs,
+                recentApplications
+            }
         });
 
     } catch (err) {

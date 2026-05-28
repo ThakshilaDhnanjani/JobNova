@@ -60,7 +60,7 @@ export const employersFeatures = [
 ];
 
 // Navigation items configurations
-export const NAVIGATION_mENU = [
+export const NAVIGATION_MENU = [
     { id: "employer-dashboard", name: "Dashboard", icon: LayoutDashboard },
     { id: "post-job", name: "Post a Job", icon: Plus },
     { id: "manage-jobs", name: "Manage Jobs", icon: Briefcase },
@@ -84,12 +84,10 @@ export const CATEGORIES = [
 ];
 
 export const JOB_TYPES = [
-    { value: 'Remote', label: 'Remote' },
-    { value: 'Full-time', label: 'Full-time' },
-    { value: 'Part-time', label: 'Part-time' },
-    { value: 'Contract', label: 'Contract' },
-    { value: 'Temporary', label: 'Temporary' },
-    { value: 'Internship', label: 'Internship' }
+    { value: 'full-time', label: 'Full-time' },
+    { value: 'part-time', label: 'Part-time' },
+    { value: 'contract', label: 'Contract' },
+    { value: 'internship', label: 'Internship' }
 ];
 
 export const SALARY_RANGES = [

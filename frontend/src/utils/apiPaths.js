@@ -24,9 +24,9 @@ export const API_PATHS = {
         DELETE_JOB: (id) => `/api/jobs/${id}`,
         // DELETE_JOB: (id) => `/api/jobs/${id}`,
 
-        SAVE_JOB: (id) => `/api/save-jobs/${id}`,
-        UNSAVE_JOB: (id) => `/api/save-jobs/${id}`,
-        GET_SAVED_JOBS: '/api/save-jobs-my',
+        SAVE_JOB: (id) => `/api/saved-jobs/${id}`,
+        UNSAVE_JOB: (id) => `/api/saved-jobs/${id}`,
+        GET_SAVED_JOBS: '/api/saved-jobs/my',
     },
 
     APPLICATIONS: {
