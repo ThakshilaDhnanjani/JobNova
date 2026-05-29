@@ -1,6 +1,6 @@
 const SavedJob = require("../models/SavedJob");
 
-//Save a job
+//@desc Save a job
 exports.saveJob = async (req, res) => {
     try {
         const exists= await SavedJob.findOne({
@@ -16,13 +16,13 @@ exports.saveJob = async (req, res) => {
             jobseeker: req.user._id,
         });
 
-        res.status(201).json(saved);
+        res.status(201).json(savedJobs);
     } catch (err) {
         res.status(500).json({ message: "Fail to Save Job", error: err.message });
     }
 };
 
-//Unsave a Job
+//@desc Unsave a Job
 exports.unsaveJob = async (req, res) => {
     try {
         await SavedJob.findOneAndDelete({ job: req.params.jobId, jobseeker: req.user._id});
@@ -35,7 +35,7 @@ exports.unsaveJob = async (req, res) => {
 //Get Saved Job For Current User
 exports.getMySavedJobs = async (req, res) => {
     try {
-        const SavedJob = await SavedJob.find({ jobseeker: req.user._id})
+        const SavedJobs = await SavedJob.find({ jobseeker: req.user._id})
         .populate ({
             path: "job",
             populate: {
@@ -43,6 +43,7 @@ exports.getMySavedJobs = async (req, res) => {
                 select: "name companyName companyLogo"
             },
         })
+        res.json(SavedJobs);
     } catch (err) {
         res.status(500).json({ message: "Fail to Fetch Saved Jobs", error:err.message})
     }

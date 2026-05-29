@@ -1,7 +1,7 @@
 const Application = require("../models/Application");
 const Job = require("../models/Job");
 
-// apply to a job (jobseeker only)
+// @desc    Apply to a job
 exports.applyToJob = async (req, res) => {
     try {
         if (req.user.role !== "jobseeker") {
@@ -10,7 +10,7 @@ exports.applyToJob = async (req, res) => {
 
         // Check if already applied
         const existingApplication = await Application.findOne({
-            job: job._id,
+            job: req.params.jobId,
             applicant: req.user._id,
         });
         if (existingApplication) {
@@ -18,10 +18,10 @@ exports.applyToJob = async (req, res) => {
         }
 
         const application = await Application.create({
-            job: job._id,
+            job: req.params.jobId,
             applicant: req.user._id,
             resume: req.user.resume, // assuming resume is stored in user profile
-            status: "applied",
+            
         });
 
         res.status(201).json(application);
@@ -34,7 +34,8 @@ exports.applyToJob = async (req, res) => {
 // get logged in user applications (jobseeker only)
 exports.getMyApplications = async (req, res) => {
     try {
-        const apps = (await Application.find({ applicant: req.user._id }).populate("job", "title company location type")).sort({createdAt: -1});
+        const apps = (await Application.find({ applicant: req.user._id })
+            .populate("job", "title company location jobType")).sort({createdAt: -1});
         res.json(apps);
     } catch (err) {
         console.error(err);
@@ -52,7 +53,26 @@ exports.getApplicansForJob = async (req, res) => {
             return res.status(403).json({ message: "You can only view applicants for your own jobs" });
         }
 
-        const applications = await Application.find({ job: req.params.jobId }).populate("job", "title location category type").populate("applicant", "name email avatar resume");
+        const applications = await Application.find({ job: req.params.jobId })
+            .populate("job", "title location category jobType")
+            .populate("applicant", "name email avatar resume");
+        res.json(applications);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: err.message });
+    }
+};
+
+// get all applicants across employer jobs
+exports.getApplicantsForEmployerJobs = async (req, res) => {
+    try {
+        const jobs = await Job.find({ company: req.user._id }).select("_id");
+        const jobIds = jobs.map((job) => job._id);
+
+        const applications = await Application.find({ job: { $in: jobIds } })
+            .populate("job", "title location category jobType")
+            .populate("applicant", "name email avatar resume");
+
         res.json(applications);
     } catch (err) {
         console.error(err);
@@ -65,7 +85,7 @@ exports.getApplicationById = async (req, res) => {
     try {
         const app = await Application.findById(req.params.id)
             .populate("job", "title")
-            .populate("applicant", "name email avatar resume");
+            .populate("applicant", "name  email avatar resume");
 
         if (!app) {
             return res.status(404).json({ message: "Application not found", id: req.params.id });
@@ -86,24 +106,41 @@ exports.getApplicationById = async (req, res) => {
     }
 };
 
-// update application status (employer only)
+// @desc    Update application status (employer only)
 exports.updateStatus = async (req, res) => {
     try {
         const { status } = req.body;
-        const app = await Application.findById(req.params.id).populate("job");
-        
-        // Check if the job belongs to the employer
-        if (!app || app.job.company.toString() !== req.user._id.toString()) {
-            return res.status(403).json({ message: "You can only update applications for your own jobs" });
+
+        const app = await Application.findById(req.params.id)
+            .populate({
+                path: "job",
+                select: "company"
+            });
+
+        if (!app) {
+            return res.status(404).json({ message: "Application not found" });
+        }
+
+        if (!app.job || !app.job.company) {
+            return res.status(500).json({ message: "Job data missing in application" });
+        }
+
+        if (app.job.company.toString() !== req.user._id.toString()) {
+            return res.status(403).json({
+                message: "You can only update applications for your own jobs"
+            });
         }
 
         app.status = status;
         await app.save();
 
-        res.json({ message: "Application status updated", status });
+        res.json({
+            message: "Application status updated",
+            status
+        });
+
     } catch (err) {
-        console.error(err);
+        console.error("UPDATE STATUS ERROR:", err);
         res.status(500).json({ message: err.message });
     }
-};  
-
+};

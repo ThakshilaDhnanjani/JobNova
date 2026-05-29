@@ -19,7 +19,7 @@ const JobCard = ({job, onClick, onSaveToggle, onApply, saved, hideApply}) => {
     >
       <div className='flex items-start justify-between mb-4'>
         <div className='flex items-start gap-4'>
-            {job.company?.companyLogo ? (
+            {job.company?.companyLogo && !job.company.companyLogo.startsWith('blob:') ? (
                 <img
                     src={job.company.companyLogo}
                     alt={`${job.company.name} logo`}
@@ -78,7 +78,7 @@ const JobCard = ({job, onClick, onSaveToggle, onApply, saved, hideApply}) => {
                 {job?.type}
             </span>
             <span className='flex items-center gap-1.5 bg-gray-100 text-gray-700 px-3 py-1 rounded-full font-medium'>
-                {job?.category}
+                {job?.category || 'Other'}
             </span>
         </div>
       </div>

@@ -25,7 +25,7 @@ exports.getEmployerAnalytics = async (req, res) => {
         const jobs = await Job.find({ company: companyId }).select("_id").lean();
         const jobIds = jobs.map(job => job._id);
         
-        const totalApplications = await Application.countDocuments({ job: { $in: jobIds }});
+        const totalApplicants = await Application.countDocuments({ job: { $in: jobIds }});
         const totalHired = await Application.countDocuments({
             job: { $in: jobIds },
             status: "Accepted",
@@ -78,7 +78,7 @@ exports.getEmployerAnalytics = async (req, res) => {
         const recentJobs = await Job.find({ company: companyId })
         .sort({ createdAt: -1})
         .limit(5)
-        .select("title location type createdAt isClosed");
+        .select("title location jobType createdAt isClosed");
 
         const recentApplications = await Application.find({
             job: { $in: jobIds },
@@ -91,11 +91,11 @@ exports.getEmployerAnalytics = async (req, res) => {
         res.json({
             counts: {
                 totalActiveJobs,
-                totalApplications,
+                totalApplicants,
                 totalHired,
                 trends: {
                     activeJobs: activeJobTrend,
-                    totalApplicants: applicationTrend,
+                    applicants: applicationTrend,
                     totalHired: hiredTrend
                 }
             },

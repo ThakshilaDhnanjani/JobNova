@@ -1,4 +1,4 @@
-import {Save, X } from 'lucide-react';
+import { Save, X } from 'lucide-react';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
 
 const EditProfileDetails = ({
@@ -33,7 +33,7 @@ const EditProfileDetails = ({
                 <div className='flex items-center space-x-4 '>
                   <div className='relative'>
                     <img
-                      src={formData?.avatar}
+                      src={formData?.avatar || null}
                       alt='Avatar'
                       className='w-20 h-20 rounded-full object-cover border-4 border-gray-200'
                     />
@@ -89,7 +89,7 @@ const EditProfileDetails = ({
                 <div className='flex items-center space-x-4 '>
                   <div className='relative'>
                     <img
-                      src={formData.companyLogo}
+                      src={formData.companyLogo || null}
                       alt='Company Logo'
                       className='w-20 h-20 rounded-lg object-cover border-4 border-gray-200'
                     />

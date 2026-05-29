@@ -8,10 +8,12 @@ import {
 import { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import JobDashboardCard from '../../components/Cards/JobDashboardCard';
+import ApplicationDashboardCard from '../../components/Cards/ApplicationDashboardCard';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { API_PATHS } from '../../utils/apiPaths';
 import axiosInstance from "../../utils/axiosInstance";
+import moment from "moment";
 
 const Card = ({ title, subtitle, headerActions, className, children}) => {
   return (
@@ -152,7 +154,7 @@ const EmployerDashboard = () => {
             headerActions={
               <button 
                 className='text-sm text-blue-600 hover:text-blue-700 font-medium'
-                onClick={() => navigate('/manage-applications') }
+                onClick={() => navigate('/manage-jobs') }
               >
                 View All
               </button>
@@ -162,9 +164,9 @@ const EmployerDashboard = () => {
               {dashboardData?.data?.recentApplications
                 ?.slice(0,3)
                 .map((data, index) => (
-                  <ApplicationDashboardCard 
+                  <ApplicationDashboardCard
                   key={index} 
-                  application={data?.applicant || ""}
+                  applicant={data?.applicant || ""}
                   position={data?.job?.title || ""}
                   time={moment(data?.updatedAt).fromNow()}
                   />

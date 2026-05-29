@@ -15,7 +15,7 @@ const SearchHeader = ({ filters, handleFilterChange }) => {
                     type="text"
                     placeholder="Search by job title, company, or keywords"
                     className="w-full pl-12 pr-4 py-2 lg:py-2.5 border border-gray-200 rounded-xl lg:rounded-xl outline-0 text-base bg-white/50  backdrop-blur-50"
-                    value={filters.keywords}
+                    value={filters.keyword}
                     onChange={(e) => handleFilterChange ("keyword", e.target.value)}
                 />
             </div>

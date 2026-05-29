@@ -25,17 +25,20 @@ exports.getJobs = async (req, res) => {
         location,
         category,
         type,
+        jobType,
         minSalary,
         maxSalary,
         userId,
     }= req.query;
+
+    const selectedJobType = type || jobType;
 
     const query ={
         isClosed: false,
         ... (keyword && { title: { $regex: keyword, $options: "i" } }),
         ... (location && { location: { $regex: location, $options: "i" } }),
         ... (category && { category }),
-        ... (type && { type }),
+        ... (selectedJobType && { jobType: selectedJobType }),
     };
 
         if (minSalary || maxSalary) {
@@ -72,9 +75,11 @@ exports.getJobs = async (req, res) => {
 
         //Attach isSaved and applicationStatus to each job
         const jobsWithExtras = jobs.map((job) => {
+            const jobObj = job.toObject();
             const jobIdStr = String(job._id);
             return {
-                ...job.toObject(),
+                ...jobObj,
+                category: jobObj.category || 'Other',
                 isSaved: SavedJobIds.includes(jobIdStr),
                 applicationStatus: appliedJobStatusMap[jobIdStr] || null,
             };
@@ -99,7 +104,7 @@ exports.getJobsEmployer = async (req, res) => {
         //get jobs posted by this employer
         const jobs = await Job.find({ company: userId })
         .populate("company", "name companyName companyLogo")
-        .lean(); // Use .lean() to get plain JS objects
+        .lean({ virtuals: true }); // Use .lean() to get plain JS objects and include virtuals
 
         //for each job, get number of applications
             const jobsWithApplicationCounts = await Promise.all(
@@ -107,6 +112,7 @@ exports.getJobsEmployer = async (req, res) => {
                     const applicationCount = await Application.countDocuments({ job: job._id });
                     return {
                         ...job,
+                        category: job.category || 'Other',
                         applicationCount,
                     };
                 })
@@ -144,8 +150,10 @@ exports.getJobById = async (req, res) => {
             }
         }
 
+        const jobObj = job.toObject();
         res.json({
-            ...job.toObject(),
+            ...jobObj,
+            category: jobObj.category || 'Other',
             applicationStatus,
         });
     } catch (err) {

@@ -159,7 +159,7 @@ function JobPostingForm() {
               jobTitle: jobData.title,
               location: jobData.location,
               category: jobData.category,
-              type: jobData.type,
+              jobType: jobData.jobType || jobData.type,
               description: jobData.description,
               requirements: jobData.requirements,
               salaryMin: jobData.salaryMin,

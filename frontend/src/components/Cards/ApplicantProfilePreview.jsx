@@ -7,7 +7,7 @@ import { API_PATHS } from "../../utils/apiPaths";
 import { toast } from "react-hot-toast";
 
 import StatusBadge from "../StatusBadge";
-const statusColors = ["Applied", "In Review", "Rejected", "Accepted" ];
+const statusOptions = ["Applied", "InReview", "Rejected", "Accepted" ];
 
 const ApplicantProfilePreview = ({
     selectedApplicant,
@@ -96,7 +96,7 @@ const ApplicantProfilePreview = ({
               <div className="flex justify-between">
                 <span className="text-gray-600">Applied Date</span>
                 <span className="text-gray-900">
-                  {moment(selectedApplicant.createdAt).format("Do MM YYYY")}
+                  {moment(selectedApplicant.CreatedAt).format("Do MM YYYY")}
                 </span>
               </div>
             </div>

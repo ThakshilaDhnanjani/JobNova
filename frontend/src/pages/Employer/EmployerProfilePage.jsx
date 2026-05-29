@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
-import { Building2, Mail, Edit3 } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
-import axiosInstance from '../../utils/axiosInstance';
-import { API_PATHS } from '../../utils/apiPaths';
+import { Building2, Edit3, Mail } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import uploadImage from '../../utils/uploadImage';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
+import { useAuth } from '../../context/AuthContext';
+import { API_PATHS } from '../../utils/apiPaths';
+import axiosInstance from '../../utils/axiosInstance';
+import uploadImage from '../../utils/uploadImage';
 import EditProfileDetails from './EditProfileDetails';
 
 const EmployerProfilePage = () => {
@@ -33,20 +33,20 @@ const EmployerProfilePage = () => {
     }));
   };
 
-  const handleImageUpload = async (field, type) => {
-    setUploading((prev) => ({ ...prev, [field]: true }));
+  const handleImageUpload = async (file, type) => {
+    const uploadKey = type === "avatar" ? "avatar" : "logo";
+    setUploading((prev) => ({ ...prev, [uploadKey]: true }));
 
     try {
       const imgUploadRes = await uploadImage(file);
-      const avatarUrl = imgUploadRes.imageUrl || "";
+      const imageUrl = imgUploadRes.imageUrl || "";
 
-      // Update form data with new avatar URL
       const field = type === "avatar" ? "avatar" : "companyLogo";
-      handleInputChange(field, avatarUrl);
+      handleInputChange(field, imageUrl);
     } catch (error) {
       console.error("Error uploading image:", error);
     } finally {
-      setUploading((prev) => ({ ...prev, [field]: false }));
+      setUploading((prev) => ({ ...prev, [uploadKey]: false }));
     }
   };
 
@@ -58,8 +58,7 @@ const EmployerProfilePage = () => {
       const field = type === "avatar" ? "avatar" : "companyLogo";
       handleInputChange(field, previewUrl);
 
-      // Upload image
-      handleImageUpload(field, type);
+      handleImageUpload(file, type);
     }
   };
 
@@ -147,8 +146,8 @@ const EmployerProfilePage = () => {
                   {/*Avatar & Name*/}
                   <div className="flex items-center space-x-4">
                     <img
-                      src={profileData.avatar }
-                      alt={profileData.name}
+                      src={profileData.avatar || null}
+                      alt={profileData.name || 'Avatar'}
                       className="w-20 h-20 rounded-full object-cover boarder-4 border-blue-500"
                     />
                     <div>
@@ -172,7 +171,7 @@ const EmployerProfilePage = () => {
                   {/*Company Logo & Name*/}
                   <div className="flex items-center space-x-4">
                     <img
-                      src={profileData.companyLogo}
+                      src={profileData.companyLogo || null}
                       alt="Company Logo"
                       className="w-20 h-20 rounded-full object-cover boarder-4 border-blue-500"
                     />

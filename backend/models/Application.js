@@ -6,8 +6,8 @@ const applicationSchema = new mongoose.Schema({
     resume: String, // URL or path to the resume
     status: { 
         type: String, 
-        enum: ['applied', 'under review', 'interview', 'offered', 'rejected'], 
-        default: 'applied' },
+        enum: ["Applied", "InReview", "Rejected", "Accepted"], 
+        default: 'Applied' },
 }, { timestamps: true });
 
 module.exports = mongoose.model("Application", applicationSchema);

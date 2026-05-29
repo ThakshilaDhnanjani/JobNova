@@ -1,19 +1,19 @@
 import {
-  MapPin,
-  DollarSign,
-  Building2,
-  Clock,
-  Users,
+    Building2,
+    Clock,
+    DollarSign,
+    MapPin,
+    Users,
 } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
-import { useParams } from 'react-router-dom';
-import axiosInstance from '../../utils/axiosInstance';
-import { API_PATHS } from '../../utils/apiPaths';
-import { useEffect, useState } from 'react';
-import Navbar from '../../components/Layout/Navbar';
 import moment from 'moment';
-import StatusBadge from '../../components/StatusBadge';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useParams } from 'react-router-dom';
+import Navbar from '../../components/Layout/Navbar';
+import StatusBadge from '../../components/StatusBadge';
+import { useAuth } from '../../context/AuthContext';
+import { API_PATHS } from '../../utils/apiPaths';
+import axiosInstance from '../../utils/axiosInstance';
 
 function JobDetails() {
   const { user } = useAuth();
@@ -37,7 +37,7 @@ function JobDetails() {
   const applyToJob = async () => {
     try {
       if (jobId) {
-        await axiosInstance.post(API_PATHS.JOBS.APPLY_TO_JOB(jobId));
+        await axiosInstance.post(API_PATHS.APPLICATIONS.APPLY_TO_JOB(jobId));
         toast.success('Application submitted successfully');
       }
       getJobDetailsById(); 
@@ -66,7 +66,7 @@ function JobDetails() {
             <div className='relative px-0 pb-8 border-b border-gray-100'>
               <div className='relative z-10'>
                 <div className='flex items-center gap-3 mb-6'>
-                  {JobDetails?.company?.companyLogo ? (
+                  {JobDetails?.company?.companyLogo && !JobDetails.company.companyLogo.startsWith('blob:') ? (
                     <img
                       src={JobDetails?.company?.companyLogo}
                       alt="Logo"
@@ -102,7 +102,7 @@ function JobDetails() {
                 {/*Tags*/}
                 <div className='flex flex-wrap gap-3'>
                   <span className='px-4 py-2 bg-blue-50 text-sm text-blue-700 rounded-full font-semibold border border-blue-200'>
-                    {JobDetails.category}
+                    {JobDetails.category || 'Other'}
                   </span>
                   <span className='px-4 py-2 bg-purple-50 text-sm text-purple-700 rounded-full font-semibold border border-purple-200'>
                     {JobDetails.type}

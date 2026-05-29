@@ -1,8 +1,7 @@
 import { Clock } from "lucide-react"
 
 const ApplicationDashboardCard = ({ applicant, position, time }) => {
-  return 
-    <div className="flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:border-gray-200 transition-colors">
+  return <div className="flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:border-gray-200 transition-colors">
       <div className="flex items-center space-x-4">
         <div className="h-10 w-10 bg-linear-to-br from-indigo-400 to-indigo-500  rounded-xl flex items-center justify-center">
           <span className="text-white font-medium text-sm">

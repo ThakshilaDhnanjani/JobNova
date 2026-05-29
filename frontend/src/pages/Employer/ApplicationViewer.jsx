@@ -1,19 +1,21 @@
 import {
-  ArrowLeft,
-  Briefcase,
-  Calculator,
-  Download,
-  MapPin,
-  Users
+    ArrowLeft,
+    Briefcase,
+    Calculator,
+    Download,
+    Eye,
+    MapPin,
+    Users,
 } from 'lucide-react';
+import moment from 'moment';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import ApplicantProfilePreview from '../../components/Cards/ApplicantProfilePreview';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
+import StatusBadge from '../../components/StatusBadge';
 import { API_PATHS } from '../../utils/apiPaths';
 import axiosInstance from '../../utils/axiosInstance';
-import { JOB_TYPES } from '../../utils/data';
-import ApplicantProfilePreview from '../../components/Cards/ApplicantProfilePreview';
-import StatusBadge from '../../components/StatusBadge';
+import { getInitials } from '../../utils/helper';
 
 
 function ApplicationViewer() {
@@ -25,42 +27,42 @@ function ApplicationViewer() {
 
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectApplicant, setSelectApplicant] = useState(null);
+  const [selectedApplicant, setSelectedApplicant] = useState(null);
 
   const fetchApplications = async () => {
     try {
       setLoading(true);
-      const response = await axiosInstance.get(
-        API_PATHS.APPLICATIONS.GET_ALL_APPLICATIONS(jobId)
-      );
+      const url = jobId
+        ? API_PATHS.APPLICATIONS.GET_ALL_APPLICATIONS(jobId)
+        : API_PATHS.APPLICATIONS.GET_EMPLOYER_APPLICATIONS;
+      const response = await axiosInstance.get(url);
       setApplications(response.data);
-    }catch (err) {
-      console.log("Failed to fetch appications")
+    } catch (err) {
+      console.log("Failed to fetch applications", err);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (jobId) fetchApplications();
-    else navigate("/manage-jobs");
-  }, []);
+    fetchApplications();
+  }, [jobId]);
 
   //Group applications by job
   const groupedApplications = useMemo(() => {
-    const filtered = applications.filter((app) => app.job.title.toLowerCase());
+    const filtered = applications.filter((app) => app.job && app.job._id && app.job.title);
 
     return filtered.reduce((acc, app) => {
       const jobId = app.job._id;
       if (!acc[jobId]) {
         acc[jobId] = {
-        job: app.job,
-        applications: [],
-      };
-    }
-    acc[jobId].applications.push(app);
-    return acc;
-  }, {});
+          job: app.job,
+          applications: [],
+        };
+      }
+      acc[jobId].applications.push(app);
+      return acc;
+    }, {});
   }, [applications]);
 
   const handleDownloadResume = (resumeURL) => {
@@ -115,7 +117,7 @@ function ApplicationViewer() {
             //application by job
             <div className='space-y-8'>
            {Object.values(groupedApplications).map(({job, applications}) => (
-           <div key={JOB._id}
+           <div key={job._id}
           className="bg-white rounded-xl shadow-md overflow-hidden"
         >
           
@@ -206,7 +208,7 @@ function ApplicationViewer() {
                       </button>
 
                       <button
-                      onClick={() => setSelectApplicant(applicant)}
+                      onClick={() => setSelectedApplicant(applicant)}
                       className="inline-flex items-center gap-2 px-3 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors ">
                         <Eye className='h-4 w-4 ' />
                         View Profile

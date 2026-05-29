@@ -28,7 +28,7 @@ function JobSeekerDashboard() {
     keyword: '',
     location: '',
     category: '',
-    type: '',
+    jobType: '',
     minSalary: '',
     maxSalary: '',
   });
@@ -83,7 +83,7 @@ function JobSeekerDashboard() {
         keyword: filters.keyword,
         location: filters.location,
         category: filters.category,
-        type: filters.type,
+        type: filters.jobType,
         minSalary: filters.minSalary,
         maxSalary: filters.maxSalary,
         experience: filters.experience,
