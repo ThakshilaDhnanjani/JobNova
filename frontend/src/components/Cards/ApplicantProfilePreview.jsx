@@ -1,10 +1,10 @@
 import { Download, X } from "lucide-react";
-import { useState } from "react";
-import { getInitials } from "../../utils/helper";
 import moment from "moment";
-import axiosInstance from "../../utils/axiosInstance";
-import { API_PATHS } from "../../utils/apiPaths";
+import { useState } from "react";
 import { toast } from "react-hot-toast";
+import { API_PATHS } from "../../utils/apiPaths";
+import axiosInstance from "../../utils/axiosInstance";
+import { getInitials } from "../../utils/helper";
 
 import StatusBadge from "../StatusBadge";
 const statusOptions = ["Applied", "InReview", "Rejected", "Accepted" ];
@@ -17,14 +17,33 @@ const ApplicantProfilePreview = ({
 }) => {
   const [currentStatus, setCurrentStatus] = useState(selectedApplicant.status );
   const [loading, setLoading] = useState(false);
+  const [showAcceptEmailModal, setShowAcceptEmailModal] = useState(false);
+  const [pendingStatus, setPendingStatus] = useState(null);
 
-  const onChangeStatus = async (e) => {
-    const newStatus = e.target.value;
-    setCurrentStatus(newStatus);
+  const openGmailCompose = () => {
+    const applicantEmail = selectedApplicant.applicant.email;
+    const subject = encodeURIComponent(
+      `Your application for ${selectedApplicant.job.title} has been accepted`
+    );
+    const body = encodeURIComponent(
+      `Hi ${selectedApplicant.applicant.name},\n\n` +
+      `Congratulations! Your application for ${selectedApplicant.job.title} has been accepted.\n\n` +
+      `Please reply to this email if you have any questions.\n\n` +
+      `Best regards,\n` +
+      `${selectedApplicant.job.companyName || "Hiring Team"}`
+    );
+
+    window.open(
+      `https://mail.google.com/mail/?view=cm&fs=1&to=${applicantEmail}&su=${subject}&body=${body}`,
+      "_blank"
+    );
+  };
+
+  const updateStatus = async (newStatus) => {
     setLoading(true);
     try {
-      const response =await axiosInstance.put(
-        API_PATHS.APPLICATIONS.UPDATE_STATUS(selectedApplicant._id), 
+      const response = await axiosInstance.put(
+        API_PATHS.APPLICATIONS.UPDATE_STATUS(selectedApplicant._id),
         { status: newStatus }
       );
       if (response.status === 200) {
@@ -34,9 +53,34 @@ const ApplicantProfilePreview = ({
     } catch (error) {
       console.error("Error updating application status:", error);
       toast.error("Failed to update application status");
-      setCurrentStatus(selectedApplicant.status); 
+      setCurrentStatus(selectedApplicant.status);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const onChangeStatus = (e) => {
+    const newStatus = e.target.value;
+
+    if (newStatus === "Accepted" && currentStatus !== "Accepted") {
+      setPendingStatus(newStatus);
+      setShowAcceptEmailModal(true);
+      return;
+    }
+
+    setCurrentStatus(newStatus);
+    updateStatus(newStatus);
+  };
+
+  const handleAcceptEmailChoice = (sendEmail) => {
+    setShowAcceptEmailModal(false);
+    setCurrentStatus(pendingStatus || "Accepted");
+    if (sendEmail) {
+      openGmailCompose();
+    }
+    if (pendingStatus) {
+      updateStatus(pendingStatus);
+      setPendingStatus(null);
     }
   };
 
@@ -134,6 +178,35 @@ const ApplicantProfilePreview = ({
         </div>
       </div>
     </div>
+
+    {showAcceptEmailModal && (
+      <div className="fixed inset-0 bg-black/30 flex items-center justify-center p-4 z-60">
+        <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-3">
+            Send acceptance email?
+          </h3>
+          <p className="text-sm text-gray-600 mb-6">
+            You have marked this application as accepted. Would you like to send a mail to the applicant&apos;s email pre-filled?
+          </p>
+          <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
+            <button
+              type="button"
+              onClick={() => handleAcceptEmailChoice(false)}
+              className="w-full sm:w-auto px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition"
+            >
+              No, close
+            </button>
+            <button
+              type="button"
+              onClick={() => handleAcceptEmailChoice(true)}
+              className="w-full sm:w-auto px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+            >
+              Yes, open Gmail
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
   </div>
 }
 
