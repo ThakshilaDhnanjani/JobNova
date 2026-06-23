@@ -12,7 +12,7 @@ const LoadingSpinner = () => {
         </div>
 
         <p className="text-gray-600 font-medium">
-            Find ammazing Opportunities...
+            Finding Opportunities...
         </p>
       </div>
     </div>

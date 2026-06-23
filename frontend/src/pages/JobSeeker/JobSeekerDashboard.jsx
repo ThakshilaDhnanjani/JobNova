@@ -66,7 +66,11 @@ function JobSeekerDashboard() {
       const jobsData = Array.isArray(response.data) 
         ? response.data 
         : response.data.jobs || [];
-      setJobs(jobsData);
+      const sortedJobs = jobsData.sort(
+  (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+);
+
+setJobs(sortedJobs);
     } catch (err) {
       console.error("Error fetching jobs:", err);
       setError("Failed to load jobs. Please try again.");
@@ -331,4 +335,4 @@ function JobSeekerDashboard() {
   )
 }
 
-export default JobSeekerDashboard
+export default JobSeekerDashboard;

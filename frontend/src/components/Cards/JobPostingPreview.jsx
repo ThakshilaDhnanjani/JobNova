@@ -119,7 +119,7 @@ const JobPostingPreview = ({ formData, setIsPreview }) => {
                                                 }
                                                 {formData.salaryMax.toLocaleString()}
                                                 <span className='text-sm md:text-lg text-gray-600 font-normal ml-1'>
-                                                    per year
+                                                    per Month
                                                 </span>
                                             </div>
                                         </div>

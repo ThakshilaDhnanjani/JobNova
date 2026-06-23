@@ -56,7 +56,7 @@ exports.getJobs = async (req, res) => {
             
     try {
         const jobs = await Job.find(query).populate(
-            "company", "name companyLogo"
+            "company", "companyName companyLogo"
         );
         let SavedJobIds = [];
         let appliedJobStatusMap = {};

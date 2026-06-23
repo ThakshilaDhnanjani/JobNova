@@ -134,7 +134,7 @@ function JobDetails() {
                       <h3 className='text-sm font-semibold text-gray-900 mb-1'>Compensation</h3>
                       <div className='text-lg text-gray-900 font-bold'>
                         {JobDetails.salaryMin} - {JobDetails.salaryMax}
-                        <span className='text-lg text-gray-600 font-normal ml-1'> per year</span>
+                        <span className='text-lg text-gray-600 font-normal ml-1'> per Month</span>
                       </div>
                     </div>
                   </div>
