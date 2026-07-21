@@ -46,10 +46,16 @@ const ProfileDropdown = ({
               <p className="text-xs text-gray-500">{email}</p>
             </div>
 
-            <a 
-              onClick={() => navigate(userRole === 'jobseeker' ? '/profile' : '/company-profile')}
-              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-              >View Profile</a>
+            <button
+              type="button"
+              onClick={() => {
+                navigate(userRole === 'jobseeker' ? '/viewProfile' : '/company-profile');
+                onToggle();
+              }}
+              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              View Profile
+            </button>
               <div className="border-t border-gray-100 mt-2 pt-2">
                 <a 
                   href="#"
