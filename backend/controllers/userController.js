@@ -100,3 +100,81 @@ exports.viewProfile = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 };
+
+exports.addExperience = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        const { jobTitle, companyName, location, startDate, endDate, current, description } = req.body;
+        user.experience.unshift({ jobTitle, companyName, location, startDate, endDate, current, description });
+        await user.save();
+        res.json({
+            success: true,
+            data: user.experience
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: err.message });
+    }
+};
+
+exports.deleteExperience = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        const expId = req.params.expId || req.params.exp_id;
+        const expIndex = user.experience.findIndex(exp => exp._id.toString() === expId);
+        if (expIndex === -1) return res.status(404).json({ message: "Experience not found" });
+
+        user.experience.splice(expIndex, 1);
+        await user.save();
+        res.json({
+            success: true,
+            data: user.experience
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: err.message });
+    }
+};
+
+exports.addEducation = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        const { schoolName, degree, fieldOfStudy, startDate, endDate, current, description } = req.body;
+        user.education.unshift({ schoolName, degree, fieldOfStudy, startDate, endDate, current, description });
+        await user.save();
+        res.json({
+            success: true,
+            data: user.education
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: err.message });
+    }
+};
+
+exports.deleteEducation = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        const eduId = req.params.eduId || req.params.edu_id;
+        const eduIndex = user.education.findIndex(edu => edu._id.toString() === eduId);
+        if (eduIndex === -1) return res.status(404).json({ message: "Education not found" });
+
+        user.education.splice(eduIndex, 1);
+        await user.save();
+        res.json({  
+            success: true,
+            data: user.education
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: err.message });
+    }
+};
