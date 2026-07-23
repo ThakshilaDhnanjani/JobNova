@@ -15,6 +15,26 @@ const userSchema = new mongoose.Schema({
     companyLogo: String
 }, { timestamps: true });
 
+const experienceSchema  = new mongoose.Schema({
+    jobTitle: String,
+    companyName: String,
+    startDate: Date,
+    endDate: Date,
+    description: String,
+    current: Boolean,
+    location: String    
+});
+
+const educationSchema = new mongoose.Schema({
+    schoolName: String,
+    degree: String,
+    fieldOfStudy: String,
+    startDate: Date,
+    endDate: Date,
+    current: Boolean,
+    description: String
+});
+
 // Hash password before saving
 userSchema.pre("save", async function() {
     if (!this.isModified("password")) return;

@@ -7,6 +7,11 @@ export const API_PATHS = {
         GET_PROFILE: "/api/auth/profile", //get logged in user details
         UPDATE_PROFILE: "/api/user/profile", // update user details
         DELETE_RESUME: "/api/user/resume",// delete resume details
+        VIEW_PROFILE: "/api/user/viewProfile", // view authenticated user's profile
+        ADD_EXPERIENCE: "/api/user/add-experience", // add experience
+        DELETE_EXPERIENCE: (expId) => `/api/user/delete-experience/${expId}`, // delete experience
+        ADD_EDUCATION: "/api/user/add-education", // add education
+        DELETE_EDUCATION: (eduId) => `/api/user/delete-education/${eduId}`, // delete education
     },
 
     DASHBOARD: {

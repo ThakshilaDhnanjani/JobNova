@@ -1,7 +1,64 @@
+const mongoose = require("mongoose");
 const Job = require("../models/Job");
 const User = require("../models/User");
 const Application = require("../models/Application");
 const SavedJob = require("../models/SavedJob");
+
+const fallbackJobs = [
+    {
+        _id: "demo-job-1",
+        title: "Frontend Developer",
+        description: "Build polished user experiences for our product team.",
+        requirements: "React, Tailwind, accessibility experience",
+        location: "Remote",
+        category: "Engineering",
+        salaryMin: 120000,
+        salaryMax: 160000,
+        salaryRange: "$120k - $160k",
+        jobType: "full-time",
+        company: {
+            _id: "demo-company-1",
+            companyName: "Northstar Labs",
+            companyLogo: "",
+        },
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        isClosed: false,
+        type: "Full-time",
+        isSaved: false,
+        applicationStatus: null,
+    },
+    {
+        _id: "demo-job-2",
+        title: "Product Designer",
+        description: "Design intuitive hiring workflows for job seekers and employers.",
+        requirements: "Figma, UI systems, user research",
+        location: "New York, NY",
+        category: "Design",
+        salaryMin: 100000,
+        salaryMax: 140000,
+        salaryRange: "$100k - $140k",
+        jobType: "full-time",
+        company: {
+            _id: "demo-company-2",
+            companyName: "BrightPath",
+            companyLogo: "",
+        },
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        isClosed: false,
+        type: "Full-time",
+        isSaved: false,
+        applicationStatus: null,
+    },
+];
+
+const getFallbackJobs = (userId = null) =>
+    fallbackJobs.map((job) => ({
+        ...job,
+        isSaved: false,
+        applicationStatus: null,
+    }));
 
 // create new job (employer only)
 exports.createJob = async (req, res) => {
@@ -55,6 +112,10 @@ exports.getJobs = async (req, res) => {
         };
             
     try {
+        if (mongoose.connection.readyState !== 1) {
+            return res.json(getFallbackJobs(userId));
+        }
+
         const jobs = await Job.find(query).populate(
             "company", "companyName companyLogo"
         );
